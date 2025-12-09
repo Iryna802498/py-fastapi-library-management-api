@@ -66,15 +66,6 @@ def get_book_by_title(
     )
 
 
-def get_book_by_author(
-        db: Session,
-        author_id: int
-) -> models.DBBook | None:
-    return db.scalar(
-        select(models.DBBook).where(models.DBBook.author_id == author_id)
-    )
-
-
 def create_book(
         db: Session,
         book: schemas.BookCreate

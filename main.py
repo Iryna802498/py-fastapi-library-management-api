@@ -1,4 +1,4 @@
-from typing import Annotated, Generator
+from typing import Annotated, Generator, Optional
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import crud
@@ -26,7 +26,7 @@ def read_authors(
     return crud.get_all_authors(db=db, skip=skip, limit=limit)
 
 
-@app.get("/authors/{author_id}/", response_model=schemas.AuthorBase)
+@app.get("/authors/{author_id}/", response_model=schemas.AuthorList)
 def read_single_author(
     author_id: int,
     db: Annotated[Session, Depends(get_db)]
@@ -40,7 +40,7 @@ def read_single_author(
     return db_author
 
 
-@app.post("/authors/", response_model=schemas.AuthorBase)
+@app.post("/authors/", response_model=schemas.AuthorList)
 def create_author(
     author: schemas.AuthorCreate,
     db: Annotated[Session, Depends(get_db)]
@@ -51,7 +51,7 @@ def create_author(
     )
     if db_author:
         raise HTTPException(
-            status_code=404,
+            status_code=409,
             detail="Author with this name already exists"
         )
     return crud.create_author(
@@ -64,7 +64,7 @@ def create_author(
 def read_books(
     skip: int = 0,
     limit: int = 10,
-    author_id: int = None,
+    author_id: Optional[int] = None,
     db: Session = Depends(get_db)
 ):
    return crud.get_books_list(
@@ -72,7 +72,7 @@ def read_books(
    )
 
 
-@app.post("/books/", response_model=schemas.BookBase)
+@app.post("/books/", response_model=schemas.BookList)
 def create_book(
     book: schemas.BookCreate,
     db: Annotated[Session, Depends(get_db)]
@@ -82,7 +82,7 @@ def create_book(
     )
     if db_book:
         raise HTTPException(
-            status_code=404,
+            status_code=409,
             detail="Book with this title already exists"
         )
     author = crud.get_author_by_id(
