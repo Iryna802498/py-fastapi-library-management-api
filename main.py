@@ -1,12 +1,19 @@
+from contextlib import contextmanager
 from typing import Annotated, Generator, Optional
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 import crud
 import schemas
-from db.database import SessionLocal
+from db.database import SessionLocal, Base, engine
 
 
-app = FastAPI()
+@contextmanager
+def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 def get_db() -> Generator[Session, None, None]:

@@ -36,8 +36,7 @@ def upgrade() -> None:
     sa.Column('publication_date', sa.Date(), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['author.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('title')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_book_id'), 'book', ['id'], unique=False)
     # ### end Alembic commands ###
