@@ -84,14 +84,6 @@ def create_book(
     book: schemas.BookCreate,
     db: Annotated[Session, Depends(get_db)]
 ):
-    db_book = crud.get_book_by_title(
-        db=db, title=book.title
-    )
-    if db_book:
-        raise HTTPException(
-            status_code=409,
-            detail="Book with this title already exists"
-        )
     author = crud.get_author_by_id(
         db=db, author_id=book.author_id
     )
